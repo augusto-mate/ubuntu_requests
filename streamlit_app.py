@@ -2,9 +2,6 @@ import streamlit as st
 import requests
 import os
 
-SAVE_DIR = "Fetched_Images"
-os.makedirs(SAVE_DIR, exist_ok=True)
-
 st.title("Ubuntu Image Fetcher")
 
 url = st.text_input("Enter the image URL:")
@@ -22,14 +19,18 @@ if st.button("Download image"):
                 st.error("Image too large (>10MB).")
             else:
                 filename = os.path.basename(url.strip())
-                if filename not in filename or "." not in filename:
+                if not filename or "." not in filename:
                     filename = "image_downloaded.jpg"
-                filepath = os.path.join(SAVE_DIR, filename)
-                if os.path.exists(filepath):
-                    st.warning(f"Already exists in {filepath}")
-                else:
-                    with open(filepath, "wb") as f:
-                        f.write(r.content)
-                    st.success(f"Downloaded: {filepath} ({len(r.content)} bytes)")
+
+                st.success(f"Image downloaded: {filename} ({len(r.content)} bytes)")
+                st.image(r.content, caption=filename)
+
+                # Button for direct download to the user's PC
+                st.download_button(
+                    label="Download image",
+                    data=r.content,
+                    file_name=filename,
+                    mime=content_type
+                )
         except Exception as e:
             st.error(f"Error: {str(e)}")
