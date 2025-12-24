@@ -18,6 +18,13 @@ if st.button("Download image"):
             elif len(r.content) > 10 * 1024 * 1024:
                 st.error("Image too large (>10MB).")
             else:
+                # Set correct extension
+                ext = ".jpg"
+                if "png" in content_type:
+                    ext = ".png"
+                elif "jpeg" in content_type:
+                    ext = ".jpg"
+                
                 filename = os.path.basename(url.strip())
                 if not filename or "." not in filename:
                     filename = "image_downloaded.jpg"
@@ -29,8 +36,8 @@ if st.button("Download image"):
                 st.download_button(
                     label="Download image",
                     data=r.content,
-                    file_name=filename,
-                    mime=content_type
+                    file_name=filename,                    # simple and clear name
+                    mime=f"image/{ext.strip('.')}"         # forced type
                 )
         except Exception as e:
             st.error(f"Error: {str(e)}")
